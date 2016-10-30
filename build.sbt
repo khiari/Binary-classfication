@@ -3,7 +3,7 @@ import play.sbt.routes.RoutesKeys._
 
 
 name         := """spark-play"""
-organization := "ch.alexmass"
+organization := "Abderrahmen khiari"
 version      := "0.0.1"
 scalaVersion := Version.scala
 

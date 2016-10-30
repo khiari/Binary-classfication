@@ -280,5 +280,6 @@
     <orderEntry type="library" name="SBT: org.tachyonproject:tachyon-underfs-s3:0.8.2:jar" level="project" />
     <orderEntry type="library" name="SBT: org.xerial.snappy:snappy-java:1.1.2.1:jar" level="project" />
     <orderEntry type="library" name="SBT: org.mongodb.spark:mongo-spark-connector_2.11:0.1:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.scopt:scopt_2.11:3.5.0:jar" level="project" />
   </component>
 </module>
