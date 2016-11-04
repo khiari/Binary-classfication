@@ -2,7 +2,7 @@ package ml
 
 
 import com.mongodb.spark.config.ReadConfig
-import demo.SparkCommons
+import controllers.SparkCommons
 import com.mongodb.spark._
 import org.apache.spark.ml.Transformer
 import org.apache.spark.sql.{DataFrame}
@@ -162,7 +162,34 @@ def fit_df(params:Params) : LogisticRegressionModel = {
   }
 
 
+def test_OHE(): Unit ={
 
+  val df = SparkCommons.sqlContext.createDataFrame(Seq(
+    (0, "a"),
+    (1, "b"),
+    (2, "c"),
+    (3, "a"),
+    (4, "a"),
+    (5, "c"),
+    (6,"c"),
+    (7,"c"),
+    (8,"d")
+  )).toDF("id", "category")
+
+  val indexer = new StringIndexer()
+    .setInputCol("category")
+    .setOutputCol("categoryIndex")
+    .fit(df)
+  val indexed = indexer.transform(df)
+
+  val encoder = new OneHotEncoder()
+    .setInputCol("categoryIndex")
+    .setOutputCol("categoryVec")
+
+  val encoded = encoder.transform(indexed)
+  encoded.show()
+  encoded.printSchema()
+}
 
 
 }

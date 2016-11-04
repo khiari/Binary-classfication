@@ -1,0 +1,137 @@
+@*
+* This template takes a single argument, a String containing a
+* message to display.
+*@
+
+
+
+@(message:String)
+
+@*
+* Call the `main` template with two arguments. The first
+* argument is a `String` with the title of the page, the second
+* argument is an `Html` object containing the body of the page.
+*@
+@main("Welcome to Play") {
+
+    @*
+    * Get an `Html` object by calling the built-in Play welcome
+    * template and passing a `String` message.
+    <button>predict</button>
+    *@
+
+
+<form action="@routes.HelloController.predictIncome()" method="POST">
+    <table>
+    <tr>
+        <td>age:</td>
+        <td><input name="age" type="number"></td>
+    </tr>
+   <tr>
+        <td>work class:</td>
+        <td>
+            <select name="workclass" typeof="text" >
+                <option value="Private">Private</option>
+                <option value="Self-emp-not-inc"> Self-emp-not-inc </option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>fnlwgt:</td>
+        <td> <input name="fnlwgt" type="number"></td>
+    </tr>
+    <tr>
+        <td>education:</td>
+        <td>
+            <select name="education" typeof="text">
+                <option value="Bachelors">Bachelors</option>
+                <option value="Some-college">Some-college</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>educationNum:</td>
+        <td> <input name="educationNum" type="number"></td>
+    </tr>
+        <tr>
+            <td>marital status:</td>
+            <td>
+                <select name="maritalStatus" typeof="text">
+                    <option name="Married-civ-spouse">Married-civ-spouse</option>
+                    <option name="Divorced">Divorced</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>occupation: </td>
+            <td>
+                <select name="occupation" typeof="text">
+                    <option name="Tech-support">Tech-support</option>
+                    <option name="Craft-repair">Craft-repair</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>relationship: </td>
+            <td>
+                <select name="relationship" typeof="text">
+                    <option name="Wife">Wife</option>
+                    <option name="Own-child">Own-child</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>race:</td>
+            <td>
+                <select name="race" typeof="text">
+                    <option name="White">White</option>
+                    <option name="Black">Black</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>sex:</td>
+            <td>
+                <select name="sex" typeof="text">
+                    <option name="Female">Female</option>
+                    <option name="Male">Male</option>
+                </select>
+            </td>
+        </tr>
+         <tr>
+            <td>capital gain:</td>
+            <td><input name="capitalGain" type="number"></td>
+        </tr>
+        <tr>
+            <td>capital loss:</td>
+            <td><input name="capitalLoss" type="number"></td>
+        </tr>
+        <tr>
+            <td>hour peer week:</td>
+            <td><input name="hoursPerWeek" type="number"></td>
+        </tr>
+        <tr>
+            <td>native country:</td>
+            <td>
+                <select name="nativeCountry" typeof="text">
+                    <option name="United-States">United-States</option>
+                    <option name="Cambodia">Cambodia</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input name="Predict" type="submit"></td>
+        </tr>
+
+    </table>
+</form>
+
+@message
+
+
+
+}
+
+
+
