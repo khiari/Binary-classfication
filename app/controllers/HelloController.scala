@@ -15,11 +15,11 @@ import org.apache.spark.ml.{Pipeline, Transformer,PipelineModel}
 
 object HelloController extends Controller {
 
-  //System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
+  //System.setProperty("hadoop.home.dir", "hadoop-common-2.2.0-bin-master")
 
-  var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
-  var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
-  println(train_df.printSchema())
+ // var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+  //var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
+//  println(train_df.printSchema())
 
   val personForm:Form[Person]=Form{mapping("age"->number,"workclass"->text,"fnlwgt"->number,"education"->text,"educationNum"->number,"maritalStatus"->text
 
@@ -55,7 +55,7 @@ object HelloController extends Controller {
 
   def decisionTree=Action{
 
-    Dtree_pipeline.fitModel((Dtree_pipeline.dtree_pipeline()))
+   // Dtree_pipeline.fitModel((Dtree_pipeline.dtree_pipeline()))
     Ok("ok")
 
   }
