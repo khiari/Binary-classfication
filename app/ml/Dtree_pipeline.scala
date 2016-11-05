@@ -18,11 +18,11 @@ object Dtree_pipeline {
 
   var prediction_model :TrainValidationSplitModel =null
   // load train  data from mongodb database
-
-  var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+  var readConfig = ReadConfig("test","train",Some("mongodb://localhost:port/"))
+  //var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
   var train_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
-
-  readConfig = ReadConfig("khiaridb","test",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+  readConfig = ReadConfig("test","test",Some("mongodb://localhost:port/"))
+  //readConfig = ReadConfig("khiaridb","test",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
   var test_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
 
   train_df=train_df.withColumnRenamed("class","label")

@@ -14,6 +14,12 @@ import com.mongodb.spark._
 
 object HelloController extends Controller {
 
+
+
+  var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+  var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
+  println(train_df.printSchema())
+
   val personForm:Form[Person]=Form{mapping("age"->number,"workclass"->text,"fnlwgt"->number,"education"->text,"educationNum"->number,"maritalStatus"->text
 
     , "occupation"->text,"relationship"->text,"race"->text,"sex"->text
