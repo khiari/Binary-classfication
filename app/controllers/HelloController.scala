@@ -1,5 +1,6 @@
 package controllers
 
+import com.mongodb.spark.config.ReadConfig
 import ml.LogisticRegression.Params
 import ml._
 import models.Person
@@ -8,6 +9,7 @@ import play.api.data.Forms._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc._
+import com.mongodb.spark._
 
 
 object HelloController extends Controller {
@@ -22,6 +24,10 @@ object HelloController extends Controller {
 
 
   def index() = Action {
+
+    var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+    var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
+    println(train_df.printSchema())
     Ok(views.html.index(""))
   }
 
@@ -32,7 +38,14 @@ object HelloController extends Controller {
    // LogisticRegression.run(Params(0.0,0.0,100,true,1E-6))
     //LogisticRegression.test_OHE()
     LR_pipeline.fitModel(LR_pipeline.preppedLRPipeline())
-    Ok(s"logistic regression model scored:${LogisticRegression.f1_score} using F1 scoring")
+    Ok("ok")
+
+  }
+
+  def decisionTree=Action{
+
+    Dtree_pipeline.fitModel((Dtree_pipeline.dtree_pipeline()))
+    Ok("ok")
 
   }
 

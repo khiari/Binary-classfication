@@ -4,6 +4,7 @@
 
 GET        /                    controllers.HelloController.index
 GET        /lr                  controllers.HelloController.logisticRegression
+GET        /dt                  controllers.HelloController.decisionTree
 POST       /predictIncome       controllers.HelloController.predictIncome
 
 

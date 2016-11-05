@@ -28,7 +28,7 @@ object LR_pipeline {
 
   train_df=train_df.withColumnRenamed("class","label")
   test_df=test_df.withColumnRenamed("class","label")
-  @transient lazy val logger = Logger.getLogger(getClass.getName)
+
 
 
   val columns =Array("age","workclass","fnlwgt","education","education-num","marital-status","occupation",
@@ -72,7 +72,7 @@ object LR_pipeline {
   def preppedLRPipeline():TrainValidationSplit = {
     val lr = new LogisticRegression()
 
-    val paramGrid = new ParamGridBuilder()
+    val LR_paramGrid = new ParamGridBuilder()
       .addGrid(lr.regParam, Array(0.1, 0.01))
       .addGrid(lr.fitIntercept)
       .addGrid(lr.elasticNetParam, Array(0.0
@@ -80,15 +80,15 @@ object LR_pipeline {
       ))
       .build()
 
-    val pipeline = new Pipeline()
+    val LR_pipeline = new Pipeline()
       .setStages(Array( workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer, relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,
         workclassEncoder, educationEncoder, maritalStatusEncoder, occupationEncoder, relationshipEncoder, raceEncoder, sexEncoder, nativeCountryEncoder,
         assembler,lr))
 
      val tvs = new TrainValidationSplit()
-      .setEstimator(pipeline)
+      .setEstimator(LR_pipeline)
       .setEvaluator(new BinaryClassificationEvaluator())
-      .setEstimatorParamMaps(paramGrid)
+      .setEstimatorParamMaps(LR_paramGrid)
       .setTrainRatio(0.8)
 
 
@@ -100,11 +100,9 @@ object LR_pipeline {
     //train_df = labelIndexer.fit(train_df).transform(train_df)
 
     //val Array(training, test) = data.randomSplit(Array(0.8, 0.2), seed = 12345)
-    logger.info("Fitting data")
     println(train_df.printSchema())
     //training.withColumnRenamed("classIndex","label")
    prediction_model = tvs.fit(train_df)
-    logger.info("Now performing test on hold out set")
     println(test_df.printSchema())
     val holdout = prediction_model.transform(test_df).select("prediction","label")
     println(holdout.show(10))
