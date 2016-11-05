@@ -1,25 +1,25 @@
 package controllers
 
-import com.mongodb.spark.config.ReadConfig
-import ml.LogisticRegression.Params
+
+
 import ml._
 import models.Person
-import play.api.Play
 import play.api.data.Forms._
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.mvc._
-import com.mongodb.spark._
-import org.apache.spark.ml.{Pipeline, Transformer,PipelineModel}
+import org.apache.spark.ml.PipelineModel
+
 
 
 object HelloController extends Controller {
 
-  //System.setProperty("hadoop.home.dir", "hadoop-common-2.2.0-bin-master")
+  //System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
 
  // var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
   //var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
 //  println(train_df.printSchema())
+
+  val sparkcontext = SparkCommons.sc
 
   val personForm:Form[Person]=Form{mapping("age"->number,"workclass"->text,"fnlwgt"->number,"education"->text,"educationNum"->number,"maritalStatus"->text
 
