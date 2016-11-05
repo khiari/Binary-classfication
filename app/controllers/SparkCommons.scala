@@ -6,6 +6,7 @@ import org.apache.spark.{SparkContext, SparkConf}
 
 object SparkCommons {
   //build the SparkConf  object at once
+
   var conf = {
     new SparkConf(false)
       .setMaster("local[*]")

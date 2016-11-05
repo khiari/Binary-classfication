@@ -103,7 +103,8 @@ object LR_pipeline {
     println(train_df.printSchema())
     //training.withColumnRenamed("classIndex","label")
    prediction_model = tvs.fit(train_df)
-    println(test_df.printSchema())
+
+
     val holdout = prediction_model.transform(test_df).select("prediction","label")
     println(holdout.show(10))
     println(holdout.printSchema())

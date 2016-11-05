@@ -19,6 +19,7 @@ object Library {
   val sparkSQL       = "org.apache.spark"  %% "spark-sql" % Version.spark
   val sparkMLlib     = "org.apache.spark" %% "spark-mllib" % Version.spark
   val sparkCore     = "org.apache.spark" %% "spark-core" % Version.spark
+  val hadoopCommon ="org.apache.hadoop" % "hadoop-common" % "2.6.0" exclude ("org.apache.hadoop","hadoop-yarn-server-web-proxy")
  // val sparkMl     = "org.apache.spark" %% "spark-ml" % Version.spark
   val mongoSparkConnector = "org.mongodb.spark" % "mongo-spark-connector_2.11" % "0.1"
 
@@ -32,8 +33,9 @@ object Dependencies {
     sparkMLlib,
   //  sparkMl,
     sparkCore,
+ // hadoopCommon,
     mongoSparkConnector,
-//    hadoopClient,
+  // hadoopClient,
     logbackClassic % "test",
     scalaTest      % "test",
     mockitoAll     % "test"

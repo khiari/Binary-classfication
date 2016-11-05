@@ -4,12 +4,13 @@ package ml
 import com.mongodb.spark.config.ReadConfig
 import controllers.SparkCommons
 import com.mongodb.spark._
-import org.apache.spark.ml.Transformer
+import org.apache.spark.ml.{Pipeline, Transformer,PipelineModel}
 import org.apache.spark.sql.{DataFrame}
 import org.apache.spark.ml.feature._
 import org.apache.spark.sql.functions.udf
 import org.apache.spark.ml.classification.{LogisticRegression, LogisticRegressionModel}
-import org.apache.spark.mllib.evaluation.{MulticlassMetrics}
+import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
+
 
 
 
@@ -34,17 +35,53 @@ object LogisticRegression {
 
     // var to store the score
     var f1_score = 0.0
-  // load train  data from mongodb database
-   var readConfig = ReadConfig("test","train",Some("mongodb://host:port/"))
-   var train_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
- // load test data from mongodb database
-  readConfig = ReadConfig("test","test",Some("mongodb://host:port/"))
-  var test_df= SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
-
   var LR = new LogisticRegression()
 
+  var readConfig = ReadConfig("test","train",Some("mongodb://host:port/"))
+  var train_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
+
+  readConfig = ReadConfig("test","test",Some("mongodb://host:port/"))
+  var test_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
+
+  train_df=train_df.withColumnRenamed("class","label")
+  test_df=test_df.withColumnRenamed("class","label")
 
 
+
+  val columns =Array("age","workclass","fnlwgt","education","education-num","marital-status","occupation",
+    "relationship","race", "sex","capital-gain","capital-loss","hours-per-week","native-country","class")
+
+  val labelIndexer = new StringIndexer().setHandleInvalid("skip").setInputCol("label").setOutputCol("labelIndex")
+
+  val indexerModel= labelIndexer.fit(train_df)
+  train_df=indexerModel.transform(train_df).drop("label").withColumnRenamed("labelIndex","label")
+  test_df= indexerModel.transform(test_df).drop("label").withColumnRenamed("labelIndex","label")
+
+
+  val workclassIndexer = new StringIndexer().setInputCol("workclass").setOutputCol("workclassIndex")
+  val educationIndexer = new StringIndexer().setInputCol("education").setOutputCol("educationIndex")
+  val maritalStatusIndexer = new StringIndexer().setInputCol("marital-status").setOutputCol("marital-statusIndex")
+  val occupationIndexer = new StringIndexer().setInputCol("occupation").setOutputCol("occupationIndex")
+  val relationshipIndexer = new StringIndexer().setInputCol("relationship").setOutputCol("relationshipIndex")
+  val raceIndexer = new StringIndexer().setInputCol("race").setOutputCol("raceIndex")
+  val sexIndexer = new StringIndexer().setInputCol("sex").setOutputCol("sexIndex")
+  val nativeCountryIndexer = new StringIndexer().setInputCol("native-country").setOutputCol("native-countryIndex")
+
+
+  val workclassEncoder = new OneHotEncoder().setInputCol("workclassIndex").setOutputCol("workclassVec")
+  val educationEncoder = new OneHotEncoder().setInputCol("educationIndex").setOutputCol("educationVec")
+  val maritalStatusEncoder = new OneHotEncoder().setInputCol("marital-statusIndex").setOutputCol("marital-statusVec")
+  val occupationEncoder = new OneHotEncoder().setInputCol("occupationIndex").setOutputCol("occupationVec")
+  val relationshipEncoder = new OneHotEncoder().setInputCol("relationshipIndex").setOutputCol("relationshipVec")
+  val raceEncoder = new OneHotEncoder().setInputCol("raceIndex").setOutputCol("raceVec")
+  val sexEncoder = new OneHotEncoder().setInputCol("sexIndex").setOutputCol("sexVec")
+  val nativeCountryEncoder = new OneHotEncoder().setInputCol("native-countryIndex").setOutputCol("native-countryVec")
+
+  val assembler = new VectorAssembler()
+    .setInputCols(Array("workclassIndex", "educationIndex", "marital-statusIndex", "occupationIndex",
+      "relationshipIndex","raceIndex","sexIndex","native-countryIndex","age","fnlwgt","education-num",
+      "capital-gain","capital-loss","hours-per-week"))
+    .setOutputCol("features")
 
 
   def load_transform_split_df(){
@@ -105,7 +142,7 @@ df_new
 }
 
   // parameterize  LR and fit the train data
-def fit_df(params:Params) : LogisticRegressionModel = {
+def fit_df(params:Params) :PipelineModel = {
 
  LR.setFeaturesCol("features")
    .setLabelCol("label")
@@ -115,14 +152,27 @@ def fit_df(params:Params) : LogisticRegressionModel = {
   .setMaxIter(params.maxIter)
   .setTol(params.tol)
 
- val model=LR.fit(train_df)
+    val LR_pipeline = new Pipeline()
+      .setStages(Array( workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer, relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,
+        workclassEncoder, educationEncoder, maritalStatusEncoder, occupationEncoder, relationshipEncoder, raceEncoder, sexEncoder, nativeCountryEncoder,
+        assembler,LR))
 
-  model
+ var model= LR_pipeline.fit(train_df)
+    //System.setProperty("hadoop.home.dir", "C:\\hadoop-winutils-2.6.0\\")
+    model.write.overwrite().save("spark-LR-model")
+   var pipelineModel = PipelineModel.load("spark-LR-model")
+
+    val holdout = pipelineModel.transform(test_df).select("prediction","label")
+    println(holdout.show(10))
+    println(holdout.printSchema())
+
+
+  pipelineModel
 }
 
   // method to evaluate the model
   def evaluateClassificationModel(
-                                   model: Transformer,
+                                   model: PipelineModel,
                                    data: DataFrame,
                                    labelColName: String): Unit = {
 
@@ -145,51 +195,21 @@ def fit_df(params:Params) : LogisticRegressionModel = {
   // encapsulate all the ML pipeline (loading,transforming,spliting,modeling,scoring)
   def run(params:Params){
 
-    load_transform_split_df()
+    //load_transform_split_df()
 
-    println(train_df.printSchema())
-    println(test_df.printSchema())
+    //println(train_df.printSchema())
+    //println(test_df.printSchema())
 
     val LR_model=  LogisticRegression.fit_df(params)
 
-    println(LR_model.coefficients)
 
-    evaluateClassificationModel(LR_model,test_df,"label")
+
+   // evaluateClassificationModel(LR_model,test_df,"label")
 
 
 
 
   }
-
-
-def test_OHE(): Unit ={
-
-  val df = SparkCommons.sqlContext.createDataFrame(Seq(
-    (0, "a"),
-    (1, "b"),
-    (2, "c"),
-    (3, "a"),
-    (4, "a"),
-    (5, "c"),
-    (6,"c"),
-    (7,"c"),
-    (8,"d")
-  )).toDF("id", "category")
-
-  val indexer = new StringIndexer()
-    .setInputCol("category")
-    .setOutputCol("categoryIndex")
-    .fit(df)
-  val indexed = indexer.transform(df)
-
-  val encoder = new OneHotEncoder()
-    .setInputCol("categoryIndex")
-    .setOutputCol("categoryVec")
-
-  val encoded = encoder.transform(indexed)
-  encoded.show()
-  encoded.printSchema()
-}
 
 
 }
