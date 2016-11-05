@@ -15,7 +15,7 @@ import org.apache.spark.ml.{Pipeline, Transformer,PipelineModel}
 
 object HelloController extends Controller {
 
-  System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
+  //System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
 
   var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
   var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
@@ -31,7 +31,7 @@ object HelloController extends Controller {
 
 
   def index() = Action {
-    var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
+   // var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
     //var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
     //println(train_df.printSchema())
     println("ok")
