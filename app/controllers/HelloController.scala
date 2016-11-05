@@ -45,7 +45,7 @@ object HelloController extends Controller {
     // this model scored  0.9000482858522453 using F1_scoring
    //LogisticRegression.run(Params(0.0,0.0,100,true,1E-6))
     val pipelineModel= PipelineModel.load("spark-LR-model")
-    
+
 
     //LogisticRegression.test_OHE()
    // LR_pipeline.fitModel(LR_pipeline.preppedLRPipeline())
