@@ -13,7 +13,7 @@ import org.apache.spark.ml.PipelineModel
 
 object HelloController extends Controller {
 
-  val LrModelFileName="conf\\ML_models\\spark-LR-model"
+  val LrModelFileName="conf\\MLmodels\\sparkLRmodel"
   val DtreeModelFileName="spark-DT-model"
   val RandomForestModelFileName="spark-RF-model"
   val NaiveBayesModelFileName="spark-NB-model"
