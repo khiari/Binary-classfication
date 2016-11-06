@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.OneHotEncoder","timestamp":1478428783401,"sparkVersion":"1.6.2","uid":"oneHot_7b40667fc983","paramMap":{"dropLast":true,"outputCol":"occupationVec","inputCol":"occupationIndex"}}

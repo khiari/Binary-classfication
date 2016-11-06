@@ -13,7 +13,15 @@ import org.apache.spark.ml.PipelineModel
 
 object HelloController extends Controller {
 
-  //System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
+  val LrModelFileName="spark-LR-model"
+  val DtreeModelFileName="spark-DT-model"
+  val RandomForestModelFileName="spark-RF-model"
+  val NaiveBayesModelFileName="spark-NB-model"
+  val GbtModelFileName="spark-GBT-model"
+  val NeuralNetModelFileName="spark-NNet-model"
+
+
+  System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
 
  // var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
   //var train_df = SparkCommons.sc.loadFromMongoDB(readConfig = readConfig).toDF()
@@ -44,7 +52,8 @@ object HelloController extends Controller {
   def logisticRegression=Action{
     // this model scored  0.9000482858522453 using F1_scoring
    //LogisticRegression.run(Params(0.0,0.0,100,true,1E-6))
-    val pipelineModel= PipelineModel.load("spark-LR-model")
+    LR_pipeline.fitModel(LrModelFileName)
+    //val pipelineModel= PipelineModel.load("spark-LR-model")
 
 
     //LogisticRegression.test_OHE()
@@ -55,7 +64,9 @@ object HelloController extends Controller {
 
   def decisionTree=Action{
 
-   // Dtree_pipeline.fitModel((Dtree_pipeline.dtree_pipeline()))
+
+
+   Dtree_pipeline.fitModel(NeuralNetModelFileName)
     Ok("ok")
 
   }
@@ -65,8 +76,21 @@ object HelloController extends Controller {
   def predictIncome= Action{
     implicit request => val person = personForm.bindFromRequest.get
 
+      val input_df=SparkCommons.sqlContext.createDataFrame(Seq((person.age,person.workclass,person.fnlwgt,person.education,person.educationNum,
+        person.maritalStatus,person.occupation, person.relationship,person.race,person.sex,person.capitalGain,person.capitalLoss,person.hoursPerWeek,person.nativeCountry)))
+        .toDF("age","workclass","fnlwgt","education","education-num","marital-status","occupation","relationship","race","sex",
+          "capital-gain","capital-loss","hours-per-week","native-country")
 
-    Ok(views.html.predictionResult(LR_pipeline.getResult(person)))
+      val predictionModel= PipelineModel.load(DtreeModelFileName)
+      val result = predictionModel.transform(input_df).select("prediction").first().get(0)
+      var msg=""
+      if (result == 0.0)
+        msg= s"this person ${person.toString} earn <=50K"
+      else msg = s"this person ${person.toString} earn >50K"
+      println(s"result: $msg")
+
+
+      Ok(views.html.index(msg))
 
   }
 

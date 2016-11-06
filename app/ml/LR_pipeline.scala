@@ -14,10 +14,10 @@ import com.mongodb.spark._
 import org.apache.spark.ml.{Pipeline, PipelineModel}
 
 
-object LR_pipeline {
+object LR_pipeline  extends ML_pipeline {
 
 
-  var prediction_model :TrainValidationSplitModel =null
+ /* var prediction_model :PipelineModel =null
   // load train  data from mongodb database
 
   var readConfig = ReadConfig("test","train",Some("mongodb://host:port/"))
@@ -60,16 +60,27 @@ object LR_pipeline {
   val sexEncoder = new OneHotEncoder().setInputCol("sexIndex").setOutputCol("sexVec")
   val nativeCountryEncoder = new OneHotEncoder().setInputCol("native-countryIndex").setOutputCol("native-countryVec")
 
-
+*/
   val assembler = new VectorAssembler()
     .setInputCols(Array("workclassIndex", "educationIndex", "marital-statusIndex", "occupationIndex",
       "relationshipIndex","raceIndex","sexIndex","native-countryIndex","age","fnlwgt","education-num",
       "capital-gain","capital-loss","hours-per-week"))
     .setOutputCol("features")
 
+  val lr = new LogisticRegression()
+  .setFeaturesCol("features")
+  .setLabelCol("label")
+  .setFitIntercept(true)
+  .setElasticNetParam(0.0)
+  .setRegParam(0.0)
+  .setTol(1E-6)
 
+  val pipeline = new Pipeline()
+    .setStages(Array( workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer, relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,
+      workclassEncoder, educationEncoder, maritalStatusEncoder, occupationEncoder, relationshipEncoder, raceEncoder, sexEncoder, nativeCountryEncoder,
+      assembler,lr))
 
-  def preppedLRPipeline():TrainValidationSplit = {
+ /* def preppedLRPipeline():TrainValidationSplit = {
     val lr = new LogisticRegression()
 
     val LR_paramGrid = new ParamGridBuilder()
@@ -80,13 +91,13 @@ object LR_pipeline {
       ))
       .build()
 
-    val LR_pipeline = new Pipeline()
+    val pipeline = new ML_pipeline()
       .setStages(Array( workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer, relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,
         workclassEncoder, educationEncoder, maritalStatusEncoder, occupationEncoder, relationshipEncoder, raceEncoder, sexEncoder, nativeCountryEncoder,
         assembler,lr))
 
      val tvs = new TrainValidationSplit()
-      .setEstimator(LR_pipeline)
+      .setEstimator(pipeline)
       .setEvaluator(new BinaryClassificationEvaluator())
       .setEstimatorParamMaps(LR_paramGrid)
       .setTrainRatio(0.8)
@@ -94,94 +105,7 @@ object LR_pipeline {
 
     tvs
   }
-
-  def fitModel(tvs:TrainValidationSplit) {
-
-    //train_df = labelIndexer.fit(train_df).transform(train_df)
-
-    //val Array(training, test) = data.randomSplit(Array(0.8, 0.2), seed = 12345)
-    println(train_df.printSchema())
-    //training.withColumnRenamed("classIndex","label")
-   prediction_model = tvs.fit(train_df)
-
-
-    val holdout = prediction_model.transform(test_df).select("prediction","label")
-    println(holdout.show(10))
-    println(holdout.printSchema())
-
-    // have to do a type conversion for RegressionMetrics
-    val metrics = new BinaryClassificationMetrics(holdout.rdd.map(x =>
-      (x(0).asInstanceOf[Double], x(1).asInstanceOf[Double])))
-
-
-    // Precision by threshold
-    val precision = metrics.precisionByThreshold
-    precision.foreach { case (t, p) =>
-      println(s"Threshold: $t, Precision: $p")
-    }
-
-    // Recall by threshold
-    val recall = metrics.recallByThreshold
-    recall.foreach { case (t, r) =>
-      println(s"Threshold: $t, Recall: $r")
-    }
-
-    // Precision-Recall Curve
-    val PRC = metrics.pr
-
-    // F-measure
-    val f1Score = metrics.fMeasureByThreshold
-    f1Score.foreach { case (t, f) =>
-      println(s"Threshold: $t, F-score: $f, Beta = 1")
-    }
-
-    val beta = 0.5
-    val fScore = metrics.fMeasureByThreshold(beta)
-    f1Score.foreach { case (t, f) =>
-      println(s"Threshold: $t, F-score: $f, Beta = 0.5")
-    }
-
-    // AUPRC
-    val auPRC = metrics.areaUnderPR
-    println("Area under precision-recall curve = " + auPRC)
-
-    // Compute thresholds used in ROC and PR curves
-    val thresholds = precision.map(_._1)
-
-    // ROC Curve
-    val roc = metrics.roc
-
-    // AUROC
-    val auROC = metrics.areaUnderROC
-    println("Area under ROC = " + auROC)
-
-  }
-
-def getResult(person:Person) :String ={
-
-  val input_df=SparkCommons.sqlContext.createDataFrame(Seq((person.age,person.workclass,person.fnlwgt,person.education,person.educationNum,
-    person.maritalStatus,person.occupation, person.relationship,person.race,person.sex,person.capitalGain,person.capitalLoss,person.hoursPerWeek,person.nativeCountry)))
-    .toDF("age","workclass","fnlwgt","education","education-num","marital-status","occupation","relationship","race","sex",
-      "capital-gain","capital-loss","hours-per-week","native-country")
-
-    val result = prediction_model.transform(input_df).select("prediction").first().get(0)
-    var msg=""
-  if (result == 0.0)
-    msg= s"this person ${person.toString} earn <=50K"
-  else msg = s"this person ${person.toString} earn >50K"
-    println(s"result: $msg")
-
-  msg
-
-}
-
-
-
-
-
-
-
-
+  */
 
 
 

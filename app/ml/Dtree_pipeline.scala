@@ -5,46 +5,18 @@ import controllers.SparkCommons
 import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.ml.feature.{VectorIndexer, StringIndexer, VectorAssembler}
 import org.apache.spark.ml.tuning.{ParamGridBuilder, TrainValidationSplitModel, TrainValidationSplit}
-import org.apache.spark.ml.classification.{NaiveBayes, RandomForestClassifier, DecisionTreeClassifier, DecisionTreeClassificationModel}
+import org.apache.spark.ml.classification.{GBTClassifier,NaiveBayes, RandomForestClassifier, DecisionTreeClassifier,
+MultilayerPerceptronClassifier}
 import com.mongodb.spark._
 import org.apache.spark.ml.{Pipeline}
 import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 
+
 /**
  * Created by abderrahmen on 04/11/2016.
  */
-object Dtree_pipeline {
+object Dtree_pipeline extends ML_pipeline{
 
-
-  var prediction_model :TrainValidationSplitModel =null
-  // load train  data from mongodb database
-  var readConfig = ReadConfig("test","train",Some("mongodb://localhost:port/"))
-  //var readConfig = ReadConfig("khiaridb","train",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
-  var train_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
-  readConfig = ReadConfig("test","test",Some("mongodb://localhost:port/"))
-  //readConfig = ReadConfig("khiaridb","test",Some("mongodb://khiari:Kh_20843265@ds161475.mlab.com:61475/"))
-  var test_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
-
-  train_df=train_df.withColumnRenamed("class","label")
-  test_df=test_df.withColumnRenamed("class","label")
-
-  val columns =Array("age","workclass","fnlwgt","education","education-num","marital-status","occupation",
-    "relationship","race", "sex","capital-gain","capital-loss","hours-per-week","native-country","class")
-
-  val labelIndexer = new StringIndexer().setHandleInvalid("skip").setInputCol("label").setOutputCol("labelIndex")
-  val indexerModel= labelIndexer.fit(train_df)
-  train_df=indexerModel.transform(train_df).drop("label").withColumnRenamed("labelIndex","label")
-  test_df= indexerModel.transform(test_df).drop("label").withColumnRenamed("labelIndex","label")
-
-
-  val workclassIndexer = new StringIndexer().setInputCol("workclass").setOutputCol("workclassIndex")
-  val educationIndexer = new StringIndexer().setInputCol("education").setOutputCol("educationIndex")
-  val maritalStatusIndexer = new StringIndexer().setInputCol("marital-status").setOutputCol("marital-statusIndex")
-  val occupationIndexer = new StringIndexer().setInputCol("occupation").setOutputCol("occupationIndex")
-  val relationshipIndexer = new StringIndexer().setInputCol("relationship").setOutputCol("relationshipIndex")
-  val raceIndexer = new StringIndexer().setInputCol("race").setOutputCol("raceIndex")
-  val sexIndexer = new StringIndexer().setInputCol("sex").setOutputCol("sexIndex")
-  val nativeCountryIndexer = new StringIndexer().setInputCol("native-country").setOutputCol("native-countryIndex")
 
 
   val assembler = new VectorAssembler()
@@ -55,7 +27,41 @@ object Dtree_pipeline {
 
   val vectorIndexer = new VectorIndexer().setInputCol("features_vect").setOutputCol("features").setMaxCategories(42)
 
+  val dtree = new DecisionTreeClassifier()
+  .setMaxDepth(30)
+  .setFeaturesCol("features")
+  .setLabelCol("label")
 
+  val randomForest = new RandomForestClassifier()
+  .setMaxDepth(30)
+  .setNumTrees(50)
+  .setFeaturesCol("features")
+  .setLabelCol("label")
+
+  val naiveBayes = new NaiveBayes()
+
+  val gbt = new GBTClassifier()
+    .setMaxDepth(30)
+  .setFeaturesCol("features")
+  .setLabelCol("label")
+
+  val layers = Array[Int](4, 5, 4, 3)
+  // create the trainer and set its parameters
+  val neuralNet = new MultilayerPerceptronClassifier()
+    .setLayers(layers)
+    .setBlockSize(128)
+    .setSeed(1234L)
+    .setMaxIter(100)
+
+
+
+  val pipeline = new Pipeline()
+    .setStages(Array(workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer,
+      relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,assembler,vectorIndexer, neuralNet//,gbt,dtree,naiveBayes,randomForest
+       ))
+
+
+  /*
   def dtree_pipeline():TrainValidationSplit={
 
     val dtree = new DecisionTreeClassifier()
@@ -70,9 +76,9 @@ object Dtree_pipeline {
 */
    val randomForest = new RandomForestClassifier()
  val paramGrid = new ParamGridBuilder()
-      .addGrid(randomForest.maxDepth,Array(15,20,25
+      .addGrid(randomForest.maxDepth,Array(15
       ))
-      .addGrid(randomForest.numTrees,Array(30,40,50,60,70,100))
+      .addGrid(randomForest.numTrees,Array(30))
       .addGrid(randomForest.maxBins,Array(80))
       .addGrid(randomForest.minInstancesPerNode,Array(200//,100,20,50
       ))
@@ -84,7 +90,7 @@ object Dtree_pipeline {
 
       .build()*/
 
-    val pipeline = new Pipeline()
+    val pipeline = new ML_pipeline()
       .setStages(Array(workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer,
         relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,assembler,vectorIndexer,randomForest))
 
@@ -96,12 +102,12 @@ object Dtree_pipeline {
 
   tvs
   }
+  */
 
+  /*
   def fitModel(tvs:TrainValidationSplit) {
 
 
-    println(train_df.printSchema())
-    //training.withColumnRenamed("classIndex","label")
     prediction_model = tvs.fit(train_df)
     println(test_df.printSchema())
     val holdout = prediction_model.transform(test_df).select("prediction","label")
@@ -155,7 +161,7 @@ object Dtree_pipeline {
     println("Area under ROC = " + auROC)
 
   }
-
+*/
 
 
 

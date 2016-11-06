@@ -20,7 +20,6 @@ import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, Multiclas
 object LogisticRegression {
 
 
-
   // parameters to pass to LR algo
   case class Params(
 
@@ -29,9 +28,6 @@ object LogisticRegression {
                      maxIter: Int = 100,
                      fitIntercept: Boolean = true,
                      tol: Double = 1E-6)
-
-
-
 
     // var to store the score
     var f1_score = 0.0
@@ -142,7 +138,7 @@ df_new
 }
 
   // parameterize  LR and fit the train data
-def fit_df(params:Params) :PipelineModel = {
+/*def fit_df(params:Params) :PipelineModel = {
 
  LR.setFeaturesCol("features")
    .setLabelCol("label")
@@ -152,7 +148,7 @@ def fit_df(params:Params) :PipelineModel = {
   .setMaxIter(params.maxIter)
   .setTol(params.tol)
 
-    val LR_pipeline = new Pipeline()
+    val LR_pipeline = new ML_pipeline()
       .setStages(Array( workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer, relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,
         workclassEncoder, educationEncoder, maritalStatusEncoder, occupationEncoder, relationshipEncoder, raceEncoder, sexEncoder, nativeCountryEncoder,
         assembler,LR))
@@ -169,6 +165,7 @@ def fit_df(params:Params) :PipelineModel = {
 
   pipelineModel
 }
+*/
 
   // method to evaluate the model
   def evaluateClassificationModel(
@@ -200,7 +197,7 @@ def fit_df(params:Params) :PipelineModel = {
     //println(train_df.printSchema())
     //println(test_df.printSchema())
 
-    val LR_model=  LogisticRegression.fit_df(params)
+  //  val LR_model=  LogisticRegression.fit_df(params)
 
 
 
