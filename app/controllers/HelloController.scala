@@ -13,7 +13,7 @@ import org.apache.spark.ml.PipelineModel
 
 object HelloController extends Controller {
 
-  val LrModelFileName="spark-LR-model"
+  val LrModelFileName="ML_models\\spark-LR-model"
   val DtreeModelFileName="spark-DT-model"
   val RandomForestModelFileName="spark-RF-model"
   val NaiveBayesModelFileName="spark-NB-model"
@@ -81,7 +81,7 @@ object HelloController extends Controller {
         .toDF("age","workclass","fnlwgt","education","education-num","marital-status","occupation","relationship","race","sex",
           "capital-gain","capital-loss","hours-per-week","native-country")
 
-      val predictionModel= PipelineModel.load(DtreeModelFileName)
+      val predictionModel= PipelineModel.load(LrModelFileName)
       val result = predictionModel.transform(input_df).select("prediction").first().get(0)
       var msg=""
       if (result == 0.0)

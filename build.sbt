@@ -29,4 +29,8 @@ ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 //routesGenerator := InjectedRoutesGenerator
 
 
+mappings in Universal ++=
+  (baseDirectory.value / "ML_models" * "*" get) map
+    (x => x -> ("ML_models/" + x.getName))
+
 fork in run := true
