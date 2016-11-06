@@ -90,7 +90,7 @@ object HelloController extends Controller {
       println(s"result: $msg")
 
 
-      Ok(views.html.index(msg))
+      Ok(views.html.predictionResult(msg))
 
   }
 
