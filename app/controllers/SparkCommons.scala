@@ -3,7 +3,9 @@ package controllers
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkContext, SparkConf}
 
-
+/**
+ * @note SparkCommons is used to create Spark context and spark sql context
+ */
 object SparkCommons {
   //build the SparkConf  object at once
 

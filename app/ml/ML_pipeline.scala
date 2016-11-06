@@ -10,10 +10,13 @@ import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 import org.apache.spark.sql.DataFrame
 
 /**
- * Created by abderrahmen on 06/11/2016.
+ * @author Abderrahmen khiari
+ * @note this class encapsulate all the algorithm the algorithms for working with features
+ *       (convert,index,encode,vectorize) and methods to fit and evaluate models
  */
-class ML_pipeline {
+trait ML_pipeline {
 
+// file path to save model
   val LrModelFileName="conf\\ML_models\\spark-LR-model"
   val DtreeModelFileName="conf\\ML_models\\spark-DT-model"
   val RandomForestModelFileName="conf\\ML_models\\spark-RF-model"
@@ -23,26 +26,26 @@ class ML_pipeline {
 
 
   var prediction_model :PipelineModel =null
-  // load train  data from mongodb database
 
+
+  // load train data from mongodb using mongo-spark connector
   var readConfig = ReadConfig("test","train",Some("mongodb://host:port/"))
   var train_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
-
+  // load test data from mongodb using mongo-spark connector
   readConfig = ReadConfig("test","test",Some("mongodb://host:port/"))
   var test_df = SparkCommons.sc.loadFromMongoDB(readConfig=readConfig).toDF()
+
 
   train_df=train_df.withColumnRenamed("class","label")
   test_df=test_df.withColumnRenamed("class","label")
 
-  val columns =Array("age","workclass","fnlwgt","education","education-num","marital-status","occupation",
-    "relationship","race", "sex","capital-gain","capital-loss","hours-per-week","native-country","class")
-
   val labelIndexer = new StringIndexer().setHandleInvalid("skip").setInputCol("label").setOutputCol("labelIndex")
-
   val indexerModel= labelIndexer.fit(train_df)
   train_df=indexerModel.transform(train_df).drop("label").withColumnRenamed("labelIndex","label")
   test_df= indexerModel.transform(test_df).drop("label").withColumnRenamed("labelIndex","label")
 
+
+  // indexers used to index categorical features
   val workclassIndexer = new StringIndexer().setInputCol("workclass").setOutputCol("workclassIndex")
   val educationIndexer = new StringIndexer().setInputCol("education").setOutputCol("educationIndex")
   val maritalStatusIndexer = new StringIndexer().setInputCol("marital-status").setOutputCol("marital-statusIndex")
@@ -52,7 +55,7 @@ class ML_pipeline {
   val sexIndexer = new StringIndexer().setInputCol("sex").setOutputCol("sexIndex")
   val nativeCountryIndexer = new StringIndexer().setInputCol("native-country").setOutputCol("native-countryIndex")
 
-
+  //encoders to encode indexed features
   val workclassEncoder = new OneHotEncoder().setInputCol("workclassIndex").setOutputCol("workclassVec")
   val educationEncoder = new OneHotEncoder().setInputCol("educationIndex").setOutputCol("educationVec")
   val maritalStatusEncoder = new OneHotEncoder().setInputCol("marital-statusIndex").setOutputCol("marital-statusVec")
@@ -62,6 +65,12 @@ class ML_pipeline {
   val sexEncoder = new OneHotEncoder().setInputCol("sexIndex").setOutputCol("sexVec")
   val nativeCountryEncoder = new OneHotEncoder().setInputCol("native-countryIndex").setOutputCol("native-countryVec")
 
+  /** =fitModel=
+   * @note fit the model with provided pipeline and save it to hard disk
+   *
+   *
+   * @param modelFileName the file path where to save the model after being generated
+   */
   def fitModel(modelFileName:String) {
 
     println(train_df.printSchema())
@@ -74,10 +83,15 @@ class ML_pipeline {
 
   }
 
-  def evaluate_model(data:DataFrame): Unit ={
+  /**
+   * @note transform test data and evaluation the model using precision, recall, Fscore and ROC
+   * @param test_data data to evaluate the model with
+   */
+
+  def evaluate_model(test_data:DataFrame): Unit ={
 
 
-    val prediction_label = prediction_model.transform(data).select("prediction","label")
+    val prediction_label = prediction_model.transform(test_data).select("prediction","label")
 
     val metrics = new BinaryClassificationMetrics(prediction_label.rdd.map(x =>
       (x(0).asInstanceOf[Double], x(1).asInstanceOf[Double])))
@@ -123,9 +137,6 @@ class ML_pipeline {
     // AUROC
     val auROC = metrics.areaUnderROC
     println("Area under ROC = " + auROC)
-
-
-
 
   }
 

@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.OneHotEncoder","timestamp":1478444816290,"sparkVersion":"1.6.2","uid":"oneHot_156df7342fcc","paramMap":{"outputCol":"native-countryVec","inputCol":"native-countryIndex","dropLast":true}}
