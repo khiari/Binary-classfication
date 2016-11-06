@@ -1,6 +1,6 @@
 import play.sbt.PlayImport._
 import play.sbt.routes.RoutesKeys._
-
+import com.typesafe.sbt.packager.MappingsHelper._
 
 name         := """spark-play"""
 organization := "Abderrahmen khiari"
@@ -28,9 +28,12 @@ ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 //routesGenerator := InjectedRoutesGenerator
 
-
+/*
 mappings in Universal ++=
   (baseDirectory.value / "ML_models" * "*" get) map
     (x => x -> ("ML_models/" + x.getName))
+*/
+
+//mappings in Universal ++= directory(baseDirectory.value / "ML_models")
 
 fork in run := true
