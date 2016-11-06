@@ -33,6 +33,12 @@
             <select name="workclass" typeof="text" >
                 <option value="Private">Private</option>
                 <option value="Self-emp-not-inc"> Self-emp-not-inc </option>
+                <option value="Self-emp-inc">Self-emp-inc</option>
+                <option value="Federal-gov">Federal-gov </option>
+                <option value="Never-worked">Never-worked </option>
+                <option value="Without-pay">Without-pay </option>
+                <option value="State-gov">State-gov </option>
+                <option value="Local-gov">Local-gov</option>
             </select>
         </td>
     </tr>
@@ -46,6 +52,20 @@
             <select name="education" typeof="text">
                 <option value="Bachelors">Bachelors</option>
                 <option value="Some-college">Some-college</option>
+                <option value="11th"  >11th </option>
+                <option value="HS-grad">HS-grad </option>
+                <option value="Prof-school"> Prof-school</option>
+                <option value="Assoc-acdm">Assoc-acdm </option>
+                <option value="Assoc-voc"> Assoc-voc</option>
+                <option value="9th">9th </option>
+                <option value="7th-8th">7th-8th </option>
+                <option value="12th">12th </option>
+                <option value="Masters"> Masters</option>
+                <option value="1st-4th">1st-4th </option>
+                <option value="10th">10th </option>
+                <option value="Doctorate"> Doctorate</option>
+                <option value="5th-6th">5th-6th </option>
+                <option value="Preschool">Preschool </option>
             </select>
         </td>
     </tr>
@@ -59,6 +79,12 @@
                 <select name="maritalStatus" typeof="text">
                     <option name="Married-civ-spouse">Married-civ-spouse</option>
                     <option name="Divorced">Divorced</option>
+                    <option value="Never-married">Never-married</option>
+                    <option value="Separated">Separated</option>
+                    <option value="Widowed">Widowed</option>
+                    <option value="Married-spouse-absent">Married-spouse-absent</option>
+                    <option value="Married-AF-spouse">Married-AF-spouse</option>
+
                 </select>
             </td>
         </tr>
@@ -68,24 +94,45 @@
                 <select name="occupation" typeof="text">
                     <option name="Tech-support">Tech-support</option>
                     <option name="Craft-repair">Craft-repair</option>
+                    <option value="Other-service">Other-service</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Exec-managerial">Exec-managerial</option>
+                    <option value="Prof-specialty">Prof-specialty</option>
+                    <option value="Handlers-cleaners">Handlers-cleaners</option>
+                    <option value="Machine-op-inspct">Machine-op-inspct</option>
+                    <option value="Adm-clerical">Adm-clerical</option>
+                    <option value="Farming-fishing">Farming-fishing</option>
+                    <option value="Transport-moving">Transport-moving</option>
+                    <option value="Priv-house-serv">Priv-house-serv</option>
+                    <option value="Protective-serv">Protective-serv</option>
+                    <option value="Armed-Forces">Armed-Forces</option>
                 </select>
             </td>
         </tr>
         <tr>
             <td>relationship: </td>
             <td>
-                <select name="relationship" typeof="text">
+                <select name="relationship" typeof="text"> , , , .
                     <option name="Wife">Wife</option>
                     <option name="Own-child">Own-child</option>
+                    <option value="Husband">Husband</option>
+                    <option value="Not-in-family">Not-in-family</option>
+                    <option value="Other-relative">Other-relative</option>
+                    <option value="Unmarried">Unmarried</option>
+
                 </select>
             </td>
         </tr>
         <tr>
             <td>race:</td>
             <td>
-                <select name="race" typeof="text">
+                <select name="race" typeof="text">White, , , , .
                     <option name="White">White</option>
                     <option name="Black">Black</option>
+                    <option value="Asian-Pac-Islander">Asian-Pac-Islander</option>
+                    <option value="Amer-Indian-Eskimo">Amer-Indian-Eskimo</option>
+                    <option value="Other">Other</option>
+
                 </select>
             </td>
         </tr>
@@ -116,12 +163,33 @@
                 <select name="nativeCountry" typeof="text">
                     <option name="United-States">United-States</option>
                     <option name="Cambodia">Cambodia</option>
+                    <option value="England">England</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Puerto-Rico">Puerto-Rico</option>
+                    <option value="China">China</option>
+                    <option value="Iran">Iran</option>
+                    <option value="India">India</option>
+
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>choose ML_model:</td>
+            <td>
+                <select name="mlModel" typeof="text">
+                    <option value="LR">Logistic regression</option>
+                    <option value="DT">Decision tree </option>
+                    <option value="RF">Random Forest</option>
+                    <option value="GBT">gradient boosted trees</option>
+                    <option value="NN">neural network</option>
+                    <option value="NB">Naive bayes</option>
                 </select>
             </td>
         </tr>
         <tr>
             <td></td>
-            <td><input name="Predict" type="submit"></td>
+            <td><input name="Predict" value="Predict income" type="submit"></td>
         </tr>
 
     </table>

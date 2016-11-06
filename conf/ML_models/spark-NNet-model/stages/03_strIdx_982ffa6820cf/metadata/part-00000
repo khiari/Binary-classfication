@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1478445621578,"sparkVersion":"1.6.2","uid":"strIdx_982ffa6820cf","paramMap":{"handleInvalid":"error","outputCol":"occupationIndex","inputCol":"occupation"}}

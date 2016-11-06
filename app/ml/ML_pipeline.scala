@@ -15,11 +15,11 @@ import org.apache.spark.sql.DataFrame
 class ML_pipeline {
 
   val LrModelFileName="conf\\ML_models\\spark-LR-model"
-  val DtreeModelFileName="spark-DT-model"
-  val RandomForestModelFileName="spark-RF-model"
-  val NaiveBayesModelFileName="spark-NB-model"
-  val GbtModelFileName="spark-GBT-model"
-  val NeuralNetModelFileName="spark-NNet-model"
+  val DtreeModelFileName="conf\\ML_models\\spark-DT-model"
+  val RandomForestModelFileName="conf\\ML_models\\spark-RF-model"
+  val NaiveBayesModelFileName="conf\\ML_models\\spark-NB-model"
+  val GbtModelFileName="conf\\ML_models\\spark-GBT-model"
+  val NeuralNetModelFileName="conf\\ML_models\\spark-NNet-model"
 
 
   var prediction_model :PipelineModel =null

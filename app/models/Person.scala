@@ -8,7 +8,7 @@ case class Person(age:Int,workclass:String,fnlwgt:Int,education:String,education
 
 ,occupation:String,relationship:String,race:String,sex:String
                   ,capitalGain:Int,capitalLoss:Int
-                  ,hoursPerWeek:Int,nativeCountry:String
+                  ,hoursPerWeek:Int,nativeCountry:String,mlModel:String
 )
 
 

@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1478449536671,"sparkVersion":"1.6.2","uid":"strIdx_118fd995f626","paramMap":{"outputCol":"workclassIndex","handleInvalid":"error","inputCol":"workclass"}}

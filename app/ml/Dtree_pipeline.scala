@@ -57,7 +57,7 @@ object Dtree_pipeline extends ML_pipeline{
 
   val pipeline = new Pipeline()
     .setStages(Array(workclassIndexer, educationIndexer, maritalStatusIndexer, occupationIndexer,
-      relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,assembler,vectorIndexer, neuralNet//,gbt,dtree,naiveBayes,randomForest
+      relationshipIndexer, raceIndexer, sexIndexer, nativeCountryIndexer,assembler,vectorIndexer, randomForest//,gbt,dtree,naiveBayes,randomForest,neuralNet
        ))
 
 

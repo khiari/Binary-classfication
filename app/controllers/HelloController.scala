@@ -13,12 +13,13 @@ import org.apache.spark.ml.PipelineModel
 
 object HelloController extends Controller {
 
-  val LrModelFileName="conf/MLmodels/sparkLRmodel"
-  val DtreeModelFileName="spark-DT-model"
-  val RandomForestModelFileName="spark-RF-model"
-  val NaiveBayesModelFileName="spark-NB-model"
-  val GbtModelFileName="spark-GBT-model"
-  val NeuralNetModelFileName="spark-NNet-model"
+ // val LrModelFileName="conf/MLmodels/sparkLRmodel"
+  val LrModelFileName="conf/ML_models/spark-LR-model"
+  val DtreeModelFileName="conf/ML_models/spark-DT-model"
+  val RandomForestModelFileName="conf/ML_models/spark-RF-model"
+  val NaiveBayesModelFileName="conf/ML_models/spark-NB-model"
+  val GbtModelFileName="conf/ML_models/spark-GBT-model"
+  val NeuralNetModelFileName="conf/ML_models/spark-NNet-model"
 
 
   System.setProperty("hadoop.home.dir", "C:\\hadoop-common-2.2.0-bin-master")
@@ -32,7 +33,7 @@ object HelloController extends Controller {
   val personForm:Form[Person]=Form{mapping("age"->number,"workclass"->text,"fnlwgt"->number,"education"->text,"educationNum"->number,"maritalStatus"->text
 
     , "occupation"->text,"relationship"->text,"race"->text,"sex"->text
-    ,"capitalGain"->number, "capitalLoss"->number,"hoursPerWeek"->number,"nativeCountry"->text
+    ,"capitalGain"->number, "capitalLoss"->number,"hoursPerWeek"->number,"nativeCountry"->text,"mlModel"-> text
   )(Person.apply)(Person.unapply)}
 
   var result = new String()
@@ -64,9 +65,7 @@ object HelloController extends Controller {
 
   def decisionTree=Action{
 
-
-
-   Dtree_pipeline.fitModel(NeuralNetModelFileName)
+   Dtree_pipeline.fitModel(RandomForestModelFileName)
     Ok("ok")
 
   }
@@ -81,7 +80,17 @@ object HelloController extends Controller {
         .toDF("age","workclass","fnlwgt","education","education-num","marital-status","occupation","relationship","race","sex",
           "capital-gain","capital-loss","hours-per-week","native-country")
 
-      val predictionModel= PipelineModel.load(LrModelFileName)
+      val predictionModel= person.mlModel match {
+
+        case "LR" => PipelineModel.load(LrModelFileName)
+        case "DT" => PipelineModel.load(DtreeModelFileName)
+        case "RF" => PipelineModel.load(RandomForestModelFileName)
+        case "GBT"=> PipelineModel.load(GbtModelFileName)
+        case "NN" => PipelineModel.load(NeuralNetModelFileName)
+        case "NB" => PipelineModel.load(NaiveBayesModelFileName)
+      }
+
+
       val result = predictionModel.transform(input_df).select("prediction").first().get(0)
       var msg=""
       if (result == 0.0)

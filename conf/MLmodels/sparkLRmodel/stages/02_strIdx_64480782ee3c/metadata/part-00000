@@ -1,1 +1,1 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1478440224029,"sparkVersion":"1.6.2","uid":"strIdx_64480782ee3c","paramMap":{"outputCol":"marital-statusIndex","inputCol":"marital-status","handleInvalid":"error"}}
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1478444336943,"sparkVersion":"1.6.2","uid":"strIdx_64480782ee3c","paramMap":{"outputCol":"marital-statusIndex","inputCol":"marital-status","handleInvalid":"error"}}
