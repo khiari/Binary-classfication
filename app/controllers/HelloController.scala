@@ -54,8 +54,7 @@ object HelloController extends Controller {
 
 
   /**
-   * @note this method use the specified model in the form to predict the income of the person
-   *
+   * @note this method use the specified model in the form to predict the income of the person   *
    */
   def predictIncome= Action{
     implicit request => val person = personForm.bindFromRequest.get
